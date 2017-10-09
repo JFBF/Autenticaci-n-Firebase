@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "281589312770",
+    "firebase_url": "https://authentication-fbdac.firebaseio.com",
+    "project_id": "authentication-fbdac",
+    "storage_bucket": "authentication-fbdac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281589312770:android:e6360176fca44888",
+        "android_client_info": {
+          "package_name": "co.edu.javeriana.authentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "281589312770-96ni65pqn7qv037ajh19p0gbq0p4uqjp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.edu.javeriana.authentication",
+            "certificate_hash": "dad4fdac3738ca85375c37725cbfa12547e0b4f9"
+          }
+        },
+        {
+          "client_id": "281589312770-bu5479fc40heud6btravhmle91o04s78.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU49kUZj8uYhlBhQ83MNZ5aySM9Jp2Sdc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281589312770-bu5479fc40heud6btravhmle91o04s78.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
