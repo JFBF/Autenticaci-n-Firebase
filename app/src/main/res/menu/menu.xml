@@ -6,4 +6,7 @@
     <item
         android:id="@+id/menuSettings"
         android:title="Configuración"	/>
+    <item
+        android:id="@+id/menuTime"
+        android:title="Modo nocturno"	/>
 </menu>

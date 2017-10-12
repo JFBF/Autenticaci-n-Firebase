@@ -45,7 +45,8 @@
 
         <activity
             android:name=".InicioActivity"
-            android:label="@string/title_activity_inicio"></activity>
+            android:label="@string/title_activity_inicio" />
+        <activity android:name=".ConfiguracionActivity"></activity>
     </application>
 
 </manifest>

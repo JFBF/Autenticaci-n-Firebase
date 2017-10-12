@@ -1,6 +1,7 @@
 package co.edu.javeriana.authentication;
 
 import android.*;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,12 +22,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -36,10 +43,14 @@ public class RegistroActivity extends AppCompatActivity {
     private EditText nombre,apellido,contraseña,correo;
     private FirebaseAuth mAuth ;
 
-    final int MY_PERMISSIONS_REQUEST_CAMARA = 1;
-    final int IMAGE_PICKER_REQUEST = 2;
-    Button Galeria,Foto;
-    ImageView Igaleria;
+    private final int MY_PERMISSIONS_REQUEST_CAMARA = 1;
+    private final int IMAGE_PICKER_REQUEST = 2;
+    private Button Galeria,Foto;
+    private ImageView Igaleria;
+    private Uri profileUri = null;
+    private StorageReference mStorageRef;
+    private UserProfileChangeRequest.Builder upcrb = null;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +63,9 @@ public class RegistroActivity extends AppCompatActivity {
         apellido = (EditText)findViewById(R.id.editTextRApellio);
         contraseña = (EditText)findViewById(R.id.editTextRPassword);
         correo = (EditText)findViewById(R.id.editTextRCorreo);
+        mProgressDialog = new ProgressDialog(this);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         registrarme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,9 +157,40 @@ public class RegistroActivity extends AppCompatActivity {
                             // Log.d(TAG,	"createUserWithEmail:onComplete:"	+	task.isSuccessful());
                             FirebaseUser user	=	mAuth.getCurrentUser();
                             if(user!=null){	//Update	user	Info
-                                UserProfileChangeRequest.Builder upcrb = new UserProfileChangeRequest.Builder();
+                                upcrb = new UserProfileChangeRequest.Builder();
                                 upcrb.setDisplayName(nombre.getText().toString()+" "+apellido.getText().toString());
-                                // upcrb.setPhotoUri(Uri.parse("path/to/pic"));//fake	 uri,	real	one	coming	soon
+                                if(profileUri!=null){
+                                    mProgressDialog.setTitle("Subiendo...");
+                                    mProgressDialog.setMessage("Subiendo foto al servidor");
+                                    mProgressDialog.setCancelable(false);
+                                    mProgressDialog.show();
+                                    final Uri file = profileUri;
+                                    //System.out.println("la uri guardada es "+file);
+                                    upcrb.setPhotoUri(file);
+                                    StorageReference riversRef = mStorageRef.child("images/profile/"+file.getLastPathSegment());
+                                    riversRef.putFile(file)
+                                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                @Override
+                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                    // Get a URL to the uploaded content
+                                                   // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                                    Toast.makeText(RegistroActivity.this, "Correcto subir imagen", Toast.LENGTH_SHORT).show();
+                                                    mProgressDialog.dismiss();
+                                                    profileUri = null;
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception exception) {
+                                                    profileUri = null;
+                                                    Toast.makeText(RegistroActivity.this, "Error al subir imagen", Toast.LENGTH_SHORT).show();
+                                                    upcrb.setPhotoUri(null);
+                                                }
+                                            });
+                                }else{
+                                    Toast.makeText(RegistroActivity.this, "Seleccione una imagen", Toast.LENGTH_SHORT).show();
+                                }
+                                //fake	 uri,	real	one	coming	soon
                                 user.updateProfile(upcrb.build());
                                 startActivity(new Intent(RegistroActivity.this,	InicioActivity.class));	//o		en	el	listener
                             }
@@ -220,7 +265,8 @@ public class RegistroActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     try {
                         final Uri imageUri = data.getData();
-                        System.out.println("uri es "+imageUri);
+                        profileUri = imageUri;
+                        //System.out.println("uri es "+imageUri);
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         Igaleria.setImageBitmap(selectedImage);
@@ -233,6 +279,7 @@ public class RegistroActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    profileUri = data.getData();
                     Igaleria.setImageBitmap(imageBitmap);
                     // como obtener URI
                 }

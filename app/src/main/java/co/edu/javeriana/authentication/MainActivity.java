@@ -126,13 +126,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-                        autentication = true;
+
                         if (!task.isSuccessful()) {
                             //Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(MainActivity.this, "Fallo en la autenticación", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Fallo en la autenticación "+task.getException(), Toast.LENGTH_SHORT).show();
                             user.setText("");
                             mpassword.setText("");
-                        }
+                        }else autentication = true;
                     }
                 });
         return autentication;

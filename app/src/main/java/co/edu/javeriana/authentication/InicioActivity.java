@@ -87,6 +87,7 @@ public class InicioActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private EditText dirección;
     private TextView distanci, tiempo;
+    private boolean time = true;
 
     private LocationRequest mLocationRequest; // prender loc si esta apagada
     private LocationCallback mLocationCallback; // objeto que permite suscripción a localización
@@ -417,7 +418,7 @@ public class InicioActivity extends AppCompatActivity implements OnMapReadyCallb
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         origen = new LatLng(4.628479,-74.064908);
-        if(date.getHours()>=6 && date.getHours()<18){
+        if(date.getHours()>=6 && date.getHours()<18  ){
             if(move != null)
                 move.setImageResource(R.drawable.movelocation);
             mMap.setMapStyle(MapStyleOptions
@@ -529,7 +530,26 @@ public class InicioActivity extends AppCompatActivity implements OnMapReadyCallb
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }else	if	(itemClicked ==	R.id.menuSettings){
-            //Abrir actividad para	configuración etc
+            Intent intent	=	new	Intent(InicioActivity.this,	ConfiguracionActivity.class);
+            startActivity(intent);
+        }else if(itemClicked == R.id.menuTime){
+            if(!time){
+                if(move != null)
+                    move.setImageResource(R.drawable.movelocation);
+                mMap.setMapStyle(MapStyleOptions
+                        .loadRawResourceStyle(this, R.raw.style_json));
+                bikeActual.setIcon(BitmapDescriptorFactory
+                        .fromResource(R.drawable.bici));
+                time = true;
+            }else {
+                if(move != null)
+                    move.setImageResource(R.drawable.movelocationnight);
+                mMap.setMapStyle(MapStyleOptions
+                        .loadRawResourceStyle(this, R.raw.style_night_json));
+                bikeActual.setIcon(BitmapDescriptorFactory
+                        .fromResource(R.drawable.bicinight));
+                time = false;
+            }
         }
         return	super.onOptionsItemSelected(item);
     }
